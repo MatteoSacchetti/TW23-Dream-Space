@@ -71,12 +71,38 @@ function downlaodPosts(email) {
                 });
 
                 postHtml += `
+                        <div class="m-4">
+                            <input type="text" class="form-control" id="comment${post.post_id}" placeholder="Aggiungi un commento">
+                            <button class="btn w-100" onclick="comment(${post.post_id})">Invia</button>
+                        </div
                     </div>
-                    <hr class="mt-5 mb-5">
+                    <hr class="mb-5">
                 `;
 
                 $('#posts').append(postHtml);
             });
+        },
+        error: function (status, error) {
+            console.log('Error', status, error);
+        }
+    });
+}
+
+
+function comment($post_id) {
+    let comment = $('#comment' + $post_id).val();
+    $.ajax({
+        type: 'POST',
+        url: '../Model/home_comment.php',
+        dataType: 'json',
+        data: {
+            post_id: $post_id,
+            comment: comment
+        },
+        success: function (result) {
+            if (result === "OK") {
+                window.location.reload();
+            }
         },
         error: function (status, error) {
             console.log('Error', status, error);
