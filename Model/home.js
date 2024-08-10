@@ -90,7 +90,6 @@ function downlaodPosts(email) {
     });
 }
 
-
 function comment($post_id) {
     let comment = $('#comment' + $post_id).val();
     $.ajax({
