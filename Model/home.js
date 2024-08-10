@@ -6,6 +6,8 @@ $(document).ready(function () {
         success: function (response) {
             if (response.email) {
                 downlaodPosts(response.email);
+            } else {
+                window.location.href = 'login.html';
             }
         },
         error: function (status, error) {

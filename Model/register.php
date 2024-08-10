@@ -20,6 +20,8 @@ if (isset($email) && isset($password) && isset($name) && isset($surname)) {
     if ($stmt->affected_rows > 0) {
         $_SESSION["email"] = $email;
         header('location: ../view/home.html');
+    } else {
+        header('location: ../view/register.html');
     }
     $stmt->close();
 }

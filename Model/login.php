@@ -19,6 +19,8 @@ if (isset($email) && isset($password)) {
     if ($stmt->num_rows > 0) {
         $_SESSION["email"] = $email;
         header('location: ../view/home.html');
+    } else {
+        header('location: ../view/login.html');
     }
     $stmt->close();
 }
