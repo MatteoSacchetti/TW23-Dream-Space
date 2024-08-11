@@ -7,10 +7,89 @@ $(document).ready(function () {
         method: 'GET',
         dataType: 'json',
         success: function (response) {
-            console.log(response);
-        },  
+            // Stampo i post con relativi commenti
+            if (response.posts.length === 0) {
+                $('#posts').append(`<p class="text-center">Nessun post</p>`);
+            } else {
+                response.posts.forEach(function (post, _) {
+                    // Creo struttura carousel di bootstrap per le immagini
+                    let postHtml = `
+                        <div>
+                            <div id="carousel-${post.post_id}" class="carousel slide" data-bs-ride="carousel">
+                                <div class="carousel-inner">
+                    `;
+
+                    // Aggiungo gli elementi del carousel
+                    post.photo_urls.forEach(function (photo, index) {
+                        postHtml += `
+                                    <div class="carousel-item ${index === 0 ? 'active' : ''}">
+                                        <img src="${photo}" class="d-block w-100" alt="Slide ${index}">
+                                    </div>
+                        `;
+                    });
+
+                    postHtml += `
+                                </div>
+                                <button class="carousel-control-prev" type="button" data-bs-target="#carousel-${post.post_id}" data-bs-slide="prev">
+                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                    <span class="visually-hidden">Previous</span>
+                                </button>
+                                <button class="carousel-control-next" type="button" data-bs-target="#carousel-${post.post_id}" data-bs-slide="next">
+                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                    <span class="visually-hidden">Next</span>
+                                </button>
+                            </div>
+                            <p class="mt-3">${post.description}</p>
+                            <hr>
+                    `;
+
+                    // Aggiungo i commenti al post
+                    post.comments.forEach(function (comment) {
+                        postHtml += `
+                            <div class="m-4">
+                                <a href="profile.html?email=${comment.author}" class="btn p-0"><h5>${comment.author_name} ${comment.author_surname}</h5></a>
+                                <p>${comment.comment}</p>
+                                <hr>
+                            </div>
+                        `;
+                    });
+
+                    postHtml += `
+                            <div class="m-4">
+                                <input type="text" class="form-control" id="comment${post.post_id}" placeholder="Aggiungi un commento">
+                                <button class="btn w-100" onclick="comment(${post.post_id})">Invia</button>
+                            </div
+                        </div>
+                        <hr class="mb-5">
+                    `;
+
+                    $('#posts').append(postHtml);
+                });
+            }
+        },
         error: function (status, error) {
             console.log('Error', status, error);
         }
     });
 });
+
+function comment($post_id) {
+    let comment = $('#comment' + $post_id).val();
+    $.ajax({
+        type: 'POST',
+        url: '../Model/home_comment.php',
+        dataType: 'json',
+        data: {
+            post_id: $post_id,
+            comment: comment
+        },
+        success: function (result) {
+            if (result === "OK") {
+                window.location.reload();
+            }
+        },
+        error: function (status, error) {
+            console.log('Error', status, error);
+        }
+    });
+}
