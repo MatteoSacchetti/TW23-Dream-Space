@@ -117,12 +117,30 @@ if (isset($_SESSION["email"]) && isset($_GET["email"])) {
     }
     $stmt->close();
 
+    // Se get_email è diverso da session_email allora controllo se session_email segue get_email
+    if ($session_email != $get_email) {
+        $query = "
+            SELECT COUNT(*) 
+            FROM followers
+            WHERE author = ? AND follower = ?
+        ";
+        $stmt = $db->sql->prepare($query);
+        $stmt->bind_param("ss", $session_email, $get_email);
+        $stmt->execute();
+        $stmt->bind_result($follow);
+        $stmt->fetch();
+        $stmt->close();
+    } else {
+        $follow = -1;
+    }
+
     // Creo la risposta 
     $response = [
         "name" => $name,
         "surname" => $surname,
         "followers" => $followers,
         "following" => $following,
+        "follow" => $follow,
         "posts" => $posts
     ];
 
