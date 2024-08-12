@@ -1,4 +1,20 @@
 $(document).ready(function () {
+    $.ajax({
+        url: '../Model/session.php',
+        method: 'GET',
+        dataType: 'json',
+        success: function (response) {
+            if (response.email) {
+                $('#profilo').attr('href', 'profile.html?email=' + response.email);
+            } else {
+                window.location.href = 'login.html';
+            }
+        },
+        error: function (status, error) {
+            console.log('Error', status, error);
+        }
+    });
+
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
     const email = urlParams.get('email');
@@ -30,10 +46,14 @@ $(document).ready(function () {
                 followHtml += `
                     </div>
                 `;
-                $('#follow').append(followHtml);
+                $('#follow-logout').append(followHtml);
             } else {
-                $('#follow').next().remove()
-                $('#follow').remove()
+                let logoutHtml = `
+                    <div class="d-flex justify-content-center mt-2" id="follow-div">
+                        <a class="btn" href="../Model/logout.php">Logout</a>
+                    </div>
+                `;
+                $('#follow-logout').append(logoutHtml);
             }
 
             // Stampo i post con relativi commenti
