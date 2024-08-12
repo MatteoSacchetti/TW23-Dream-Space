@@ -6,6 +6,7 @@ $(document).ready(function () {
         success: function (response) {
             if (response.email) {
                 downlaodPosts(response.email);
+                $('#profilo').attr('href', 'profile.html?email=' + response.email);
             } else {
                 window.location.href = 'login.html';
             }
