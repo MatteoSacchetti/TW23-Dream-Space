@@ -7,6 +7,35 @@ $(document).ready(function () {
         method: 'GET',
         dataType: 'json',
         success: function (response) {
+            // Stampo il nome e cognome dell'utente
+            let dataHtml = `
+                <h2 id="dati" class="text-center">${response.name} ${response.surname}</h2>
+                <div class="d-flex justify-content-center mt-3">
+                    <a class="btn p-0" href="../view/followers.html?email=${email}"><h5>Followers: <span id="followers">${response.followers}</span></h5></a>
+                    <a class="btn p-0" href="../view/following.html?email=${email}"><h5 class="ms-5">Following: <span id="following">${response.following}</span></h5></a>
+                </div>
+            `;
+            $('#dati').append(dataHtml);
+
+            // Stampo il tasto per seguire l'utente
+            if (response.follow != -1) {
+                let followHtml = `
+                    <div class="d-flex justify-content-center mt-2" id="follow-div">
+                `;
+                if (response.follow == 0) {
+                    followHtml += `<button id="follow" class="btn" onclick="follow()">Inizia a seguire</button>`;
+                } else {
+                    followHtml += `<button id="follow" class="btn" onclick="unfollow()">Smetti di seguire</button>`;
+                }
+                followHtml += `
+                    </div>
+                `;
+                $('#follow').append(followHtml);
+            } else {
+                $('#follow').next().remove()
+                $('#follow').remove()
+            }
+
             // Stampo i post con relativi commenti
             if (response.posts.length === 0) {
                 $('#posts').append(`<p class="text-center">Nessun post</p>`);
@@ -87,6 +116,44 @@ function comment($post_id) {
             if (result === "OK") {
                 window.location.reload();
             }
+        },
+        error: function (status, error) {
+            console.log('Error', status, error);
+        }
+    });
+}
+
+function follow() {
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    const email = urlParams.get('email');
+    $.ajax({
+        url: '../Model/profile_follow.php?email=' + email,
+        method: 'GET',
+        success: function () {
+            $('#follow-div').empty();
+            $('#follow-div').append(`<button id="follow" class="btn" onclick="unfollow()">Smetti di seguire</button>`);
+            let followers = parseInt($('#followers').text());
+            $('#followers').text(followers + 1);
+        },
+        error: function (status, error) {
+            console.log('Error', status, error);
+        }
+    });
+}
+
+function unfollow() {
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    const email = urlParams.get('email');
+    $.ajax({
+        url: '../Model/profile_unfollow.php?email=' + email,
+        method: 'GET',
+        success: function () {
+            $('#follow-div').empty();
+            $('#follow-div').append(`<button id="follow" class="btn" onclick="follow()">Inizia a seguire</button>`);
+            let followers = parseInt($('#followers').text());
+            $('#followers').text(followers - 1);
         },
         error: function (status, error) {
             console.log('Error', status, error);
