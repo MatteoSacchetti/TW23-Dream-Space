@@ -15,6 +15,10 @@ $(document).ready(function () {
             console.log('Error', status, error);
         }
     });
+
+    $("#closeModalButton").on("click", function () {
+        changeStatus($(this).data("notification-id"));
+    });
 });
 
 function downlaodPosts(email) {
@@ -104,6 +108,26 @@ function comment($post_id) {
         success: function (result) {
             if (result === "OK") {
                 window.location.reload();
+                // TODO invia notifica
+            }
+        },
+        error: function (status, error) {
+            console.log('Error', status, error);
+        }
+    });
+}
+
+function changeStatus(notificationId) {
+    $.ajax({
+        type: 'POST',
+        url: '../Model/home_notifications_read.php',
+        dataType: 'json',
+        data: {
+            notification_id: notificationId
+        },
+        success: function (result) {
+            if (result != "OK") {
+                console.log('Error', result);
             }
         },
         error: function (status, error) {
@@ -121,6 +145,7 @@ setInterval(function () {
             if (response.length > 0) {
                 response = JSON.parse(response);
                 response.forEach(function (notification, _) {
+                    $("#closeModalButton").data("notification-id", notification.notification_id);
                     $("#notifiche_testo").text(notification.description);
                     $("#notifiche_modal_div").modal("show");
                 });

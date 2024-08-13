@@ -135,6 +135,7 @@ function comment($post_id) {
         success: function (result) {
             if (result === "OK") {
                 window.location.reload();
+                // TODO invia notifica
             }
         },
         error: function (status, error) {
@@ -155,6 +156,7 @@ function follow() {
             $('#follow-div').append(`<button id="follow" class="btn" onclick="unfollow()">Smetti di seguire</button>`);
             let followers = parseInt($('#followers').text());
             $('#followers').text(followers + 1);
+            // TODO invia notifica
         },
         error: function (status, error) {
             console.log('Error', status, error);

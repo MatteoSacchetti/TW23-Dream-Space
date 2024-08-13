@@ -13,15 +13,16 @@ if (isset($_SESSION["email"])) {
     $query = "
         SELECT *
         FROM notifications
-        WHERE receiver = ?
+        WHERE receiver = ? AND status = FALSE
     ";
     $stmt = $db->sql->prepare($query);
     $stmt->bind_param("s", $session_email);
     $stmt->execute();
-    $stmt->bind_result($notification_id, $sender, $receiver, $description);
+    $stmt->bind_result($notification_id, $sender, $receiver, $description, $status);
     $notifications = [];
     while ($stmt->fetch()) {
         $notifications[] = [
+            'notification_id' => $notification_id,
             'description' => $description
         ];
     }
