@@ -111,3 +111,23 @@ function comment($post_id) {
         }
     });
 }
+
+setInterval(function () {
+    $.ajax({
+        type: "GET",
+        url: "../Model/home_notifications.php",
+        datatype: "json",
+        success: function (response) {
+            if (response.length > 0) {
+                response = JSON.parse(response);
+                response.forEach(function (notification, _) {
+                    $("#notifiche_testo").text(notification.description);
+                    $("#notifiche_modal_div").modal("show");
+                });
+            }
+        },
+        error: function (status, error) {
+            console.log('Error', status, error);
+        }
+    });
+}, 5000);
