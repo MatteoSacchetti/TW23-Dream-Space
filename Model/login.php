@@ -20,7 +20,7 @@ if (isset($email) && isset($password)) {
         $_SESSION["email"] = $email;
         header('location: ../view/home.html');
     } else {
-        header('location: ../view/login.html');
+        header('location: ../view/index.html');
     }
     $stmt->close();
 }

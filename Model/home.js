@@ -8,7 +8,7 @@ $(document).ready(function () {
                 downlaodPosts(response.email);
                 $('#profilo').attr('href', 'profile.html?email=' + response.email);
             } else {
-                window.location.href = 'login.html';
+                window.location.href = 'index.html';
             }
         },
         error: function (status, error) {
