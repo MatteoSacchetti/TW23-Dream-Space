@@ -28,13 +28,34 @@ function downlaodFollowing($sessionEmail, $getEmail) {
         success: function (response) {
             response.forEach(element => {
                 let followingHtml = `
-                    <div class="m-4">
+                    <div class="m-2 text-center">
                         <a href="profile.html?email=${element.follower}" class="btn p-0"><h5>${element.name} ${element.surname}</h5></a>
+                        <br>
+                `;
+                if ($sessionEmail === $getEmail) {
+                    followingHtml += `
+                        <button class="btn p-0" onclick="unfollow('${element.follower}')">Smetti di seguire</button>
+                    `;
+                }
+                followingHtml += `
                         <hr>
                     </div>
                 `;
                 $('#following').append(followingHtml);
             });
+        },
+        error: function (status, error) {
+            console.log('Error', status, error);
+        }
+    });
+}
+
+function unfollow($email) {
+    $.ajax({
+        url: '../Model/profile_unfollow.php?email=' + $email,
+        method: 'GET',
+        success: function () {
+            window.location.reload();
         },
         error: function (status, error) {
             console.log('Error', status, error);

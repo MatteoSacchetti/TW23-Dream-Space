@@ -28,7 +28,7 @@ function downlaodFollowers($getEmail) {
         success: function (response) {
             response.forEach(element => {
                 let followersHtml = `
-                    <div class="m-4">
+                    <div class="m-2 text-center">
                         <a href="profile.html?email=${element.author}" class="btn p-0"><h5>${element.name} ${element.surname}</h5></a>
                         <hr>
                     </div>
