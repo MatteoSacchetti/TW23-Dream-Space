@@ -146,7 +146,7 @@ setInterval(function () {
                 response = JSON.parse(response);
                 response.forEach(function (notification, _) {
                     $("#closeModalButton").data("notification-id", notification.notification_id);
-                    $("#notifiche_testo").text(notification.description);
+                    $("#notifiche_testo").text(notification.message);
                     $("#notifiche_modal_div").modal("show");
                 });
             }

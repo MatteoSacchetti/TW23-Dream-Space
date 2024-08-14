@@ -18,12 +18,12 @@ if (isset($_SESSION["email"])) {
     $stmt = $db->sql->prepare($query);
     $stmt->bind_param("s", $session_email);
     $stmt->execute();
-    $stmt->bind_result($notification_id, $sender, $receiver, $description, $status);
+    $stmt->bind_result($notification_id, $sender, $receiver, $message, $status);
     $notifications = [];
     while ($stmt->fetch()) {
         $notifications[] = [
             'notification_id' => $notification_id,
-            'description' => $description
+            'message' => $message
         ];
     }
     $stmt->close();
