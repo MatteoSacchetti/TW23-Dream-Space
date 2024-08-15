@@ -84,7 +84,7 @@ function downlaodPosts(email) {
                         </div>
                         <hr class="mb-5">
                     `;
-                    
+
                 $('#posts').append(postHtml);
             });
         },
@@ -111,7 +111,7 @@ function comment($post_id, $sender, $receiver) {
                     url: '../Model/sessionNameSurname.php',
                     dataType: 'json',
                     success: function (result) {
-                        let message = result.nome + " " + result.cognome + " ha commentato il tuo post.";
+                        let message = result.nome + " " + result.cognome + " ha commentato il tuo post: " + comment;
                         $.ajax({
                             type: 'POST',
                             url: '../Model/home_notifications_send.php',
