@@ -80,12 +80,11 @@ function downlaodPosts(email) {
                 postHtml += `
                         <div class="m-4">
                             <input type="text" class="form-control" id="comment${post.post_id}" placeholder="Aggiungi un commento">
-                            <button class="btn w-100" onclick="comment(${post.post_id})">Invia</button>
-                        </div
-                    </div>
-                    <hr class="mb-5">
-                `;
-
+                            <button class="btn w-100" onclick="comment(${post.post_id}, '${email}', '${post.email}')">Invia</button>
+                        </div>
+                        <hr class="mb-5">
+                    `;
+                    
                 $('#posts').append(postHtml);
             });
         },
@@ -95,7 +94,7 @@ function downlaodPosts(email) {
     });
 }
 
-function comment($post_id) {
+function comment($post_id, $sender, $receiver) {
     let comment = $('#comment' + $post_id).val();
     $.ajax({
         type: 'POST',
@@ -107,8 +106,35 @@ function comment($post_id) {
         },
         success: function (result) {
             if (result === "OK") {
-                window.location.reload();
-                // TODO invia notifica
+                $.ajax({
+                    type: 'POST',
+                    url: '../Model/sessionNameSurname.php',
+                    dataType: 'json',
+                    success: function (result) {
+                        let message = result.nome + " " + result.cognome + " ha commentato il tuo post.";
+                        $.ajax({
+                            type: 'POST',
+                            url: '../Model/home_notifications_send.php',
+                            dataType: 'json',
+                            data: {
+                                sender: $sender,
+                                receiver: $receiver,
+                                message: message
+                            },
+                            success: function (result) {
+                                if (result === "OK") {
+                                    window.location.reload();
+                                }
+                            },
+                            error: function (status, error) {
+                                console.log('Error', status, error);
+                            }
+                        });
+                    },
+                    error: function (status, error) {
+                        console.log('Error', status, error);
+                    }
+                });
             }
         },
         error: function (status, error) {
