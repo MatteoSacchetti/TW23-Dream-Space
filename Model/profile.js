@@ -1,10 +1,12 @@
 $(document).ready(function () {
+    $sessionMail = "";
     $.ajax({
         url: '../Model/session.php',
         method: 'GET',
         dataType: 'json',
         success: function (response) {
             if (response.email) {
+                $sessionMail = response.email;
                 $('#profilo').attr('href', 'profile.html?email=' + response.email);
             } else {
                 window.location.href = 'index.html';
@@ -13,6 +15,10 @@ $(document).ready(function () {
         error: function (status, error) {
             console.log('Error', status, error);
         }
+    });
+
+    $("#closeModalButton").on("click", function () {
+        changeStatus($(this).data("notification-id"));
     });
 
     const queryString = window.location.search;
@@ -39,7 +45,7 @@ $(document).ready(function () {
                     <div class="d-flex justify-content-center mt-2" id="follow-div">
                 `;
                 if (response.follow == 0) {
-                    followHtml += `<button id="follow" class="btn" onclick="follow()">Inizia a seguire</button>`;
+                    followHtml += `<button id="follow" class="btn" onclick="follow('${$sessionMail}', '${email}')">Inizia a seguire</button>`;
                 } else {
                     followHtml += `<button id="follow" class="btn" onclick="unfollow()">Smetti di seguire</button>`;
                 }
@@ -106,7 +112,7 @@ $(document).ready(function () {
                     postHtml += `
                             <div class="m-4">
                                 <input type="text" class="form-control" id="comment${post.post_id}" placeholder="Aggiungi un commento">
-                                <button class="btn w-100" onclick="comment(${post.post_id})">Invia</button>
+                            <button class="btn w-100" onclick="comment(${post.post_id}, '${$sessionMail}', '${email}')">Invia</button>
                             </div
                         </div>
                         <hr class="mb-5">
@@ -122,7 +128,7 @@ $(document).ready(function () {
     });
 });
 
-function comment($post_id) {
+function comment($post_id, $sender, $receiver) {
     let comment = $('#comment' + $post_id).val();
     $.ajax({
         type: 'POST',
@@ -133,9 +139,38 @@ function comment($post_id) {
             comment: comment
         },
         success: function (result) {
-            if (result === "OK") {
+            if (result === "OK" && $sender != $receiver) {
+                $.ajax({
+                    type: 'POST',
+                    url: '../Model/sessionNameSurname.php',
+                    dataType: 'json',
+                    success: function (result) {
+                        let message = result.nome + " " + result.cognome + " ha commentato il tuo post: " + comment;
+                        $.ajax({
+                            type: 'POST',
+                            url: '../Model/home_notifications_send.php',
+                            dataType: 'json',
+                            data: {
+                                sender: $sender,
+                                receiver: $receiver,
+                                message: message
+                            },
+                            success: function (result) {
+                                if (result === "OK") {
+                                    window.location.reload();
+                                }
+                            },
+                            error: function (status, error) {
+                                console.log('Error', status, error);
+                            }
+                        });
+                    },
+                    error: function (status, error) {
+                        console.log('Error', status, error);
+                    }
+                });
+            } else {
                 window.location.reload();
-                // TODO invia notifica
             }
         },
         error: function (status, error) {
@@ -144,7 +179,7 @@ function comment($post_id) {
     });
 }
 
-function follow() {
+function follow($sender, $receiver) {
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
     const email = urlParams.get('email');
@@ -156,7 +191,35 @@ function follow() {
             $('#follow-div').append(`<button id="follow" class="btn" onclick="unfollow()">Smetti di seguire</button>`);
             let followers = parseInt($('#followers').text());
             $('#followers').text(followers + 1);
-            // TODO invia notifica
+            $.ajax({
+                type: 'POST',
+                url: '../Model/sessionNameSurname.php',
+                dataType: 'json',
+                success: function (result) {
+                    let message = result.nome + " " + result.cognome + " ha iniziato a seguirti.";
+                    $.ajax({
+                        type: 'POST',
+                        url: '../Model/home_notifications_send.php',
+                        dataType: 'json',
+                        data: {
+                            sender: $sender,
+                            receiver: $receiver,
+                            message: message
+                        },
+                        success: function (result) {
+                            if (result != "OK") {
+                                console.log('Error', result);
+                            }
+                        },
+                        error: function (status, error) {
+                            console.log('Error', status, error);
+                        }
+                    });
+                },
+                error: function (status, error) {
+                    console.log('Error', status, error);
+                }
+            });
         },
         error: function (status, error) {
             console.log('Error', status, error);
@@ -165,6 +228,22 @@ function follow() {
 }
 
 function unfollow() {
+    $sessionMail = "";
+    $.ajax({
+        url: '../Model/session.php',
+        method: 'GET',
+        dataType: 'json',
+        success: function (response) {
+            if (response.email) {
+                $sessionMail = response.email;
+            } else {
+                window.location.href = 'index.html';
+            }
+        },
+        error: function (status, error) {
+            console.log('Error', status, error);
+        }
+    });
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
     const email = urlParams.get('email');
@@ -173,7 +252,7 @@ function unfollow() {
         method: 'GET',
         success: function () {
             $('#follow-div').empty();
-            $('#follow-div').append(`<button id="follow" class="btn" onclick="follow()">Inizia a seguire</button>`);
+            $('#follow-div').append(`<button id="follow" class="btn" onclick="follow('${$sessionMail}', '${email}')">Inizia a seguire</button>`);
             let followers = parseInt($('#followers').text());
             $('#followers').text(followers - 1);
         },
@@ -182,3 +261,43 @@ function unfollow() {
         }
     });
 }
+
+function changeStatus(notificationId) {
+    $.ajax({
+        type: 'POST',
+        url: '../Model/home_notifications_read.php',
+        dataType: 'json',
+        data: {
+            notification_id: notificationId
+        },
+        success: function (result) {
+            if (result != "OK") {
+                console.log('Error', result);
+            }
+        },
+        error: function (status, error) {
+            console.log('Error', status, error);
+        }
+    });
+}
+
+setInterval(function () {
+    $.ajax({
+        type: "GET",
+        url: "../Model/home_notifications.php",
+        datatype: "json",
+        success: function (response) {
+            if (response.length > 0) {
+                response = JSON.parse(response);
+                response.forEach(function (notification, _) {
+                    $("#closeModalButton").data("notification-id", notification.notification_id);
+                    $("#notifiche_testo").text(notification.message);
+                    $("#notifiche_modal_div").modal("show");
+                });
+            }
+        },
+        error: function (status, error) {
+            console.log('Error', status, error);
+        }
+    });
+}, 5000);
