@@ -1,4 +1,5 @@
 $(document).ready(function () {
+    // Controllo se l'utente è loggato
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
     const email = urlParams.get('email');
@@ -20,6 +21,7 @@ $(document).ready(function () {
     });
 });
 
+// Funzione per scaricare i following
 function downlaodFollowing($sessionEmail, $getEmail) {
     $.ajax({
         url: '../Model/following.php?email=' + $getEmail,
@@ -50,6 +52,7 @@ function downlaodFollowing($sessionEmail, $getEmail) {
     });
 }
 
+// Funzione per smettere di seguire un following
 function unfollow($email) {
     $.ajax({
         url: '../Model/profile_unfollow.php?email=' + $email,

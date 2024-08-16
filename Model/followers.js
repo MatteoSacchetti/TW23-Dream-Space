@@ -1,4 +1,5 @@
 $(document).ready(function () {
+    // Controllo se l'utente è loggato
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
     const email = urlParams.get('email');
@@ -20,6 +21,7 @@ $(document).ready(function () {
     });
 });
 
+// Funzione per scaricare i followers
 function downlaodFollowers($getEmail) {
     $.ajax({
         url: '../Model/followers.php?email=' + $getEmail,
