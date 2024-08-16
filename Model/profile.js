@@ -1,4 +1,5 @@
 $(document).ready(function () {
+    // Controllo se l'utente è loggato
     $sessionMail = "";
     $.ajax({
         url: '../Model/session.php',
@@ -17,10 +18,17 @@ $(document).ready(function () {
         }
     });
 
+    // Chiamo la funzione per settare la notifica come letta quando si chiude il modal
     $("#closeModalButton").on("click", function () {
         changeStatus($(this).data("notification-id"));
     });
 
+    // Richiamo la funzione per gestire il click dell'immagine quando ridimensiono la finestra
+    $(window).resize(function () {
+        resizeImg();
+    });
+
+    // Scarico tutti i dati del profilo con i post e i commenti
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
     const email = urlParams.get('email');
@@ -129,6 +137,7 @@ $(document).ready(function () {
     });
 });
 
+// Funzoine per inviare un commento e inviare notifica all'utente
 function comment($post_id, $sender, $receiver) {
     let comment = $('#comment' + $post_id).val();
     $.ajax({
@@ -180,6 +189,7 @@ function comment($post_id, $sender, $receiver) {
     });
 }
 
+// Funzione per seguire un utente
 function follow($sender, $receiver) {
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
@@ -228,6 +238,7 @@ function follow($sender, $receiver) {
     });
 }
 
+// Funzione per smettere di seguire un utente
 function unfollow() {
     $sessionMail = "";
     $.ajax({
@@ -263,6 +274,7 @@ function unfollow() {
     });
 }
 
+// Funzione per settare la notifica come letta
 function changeStatus(notificationId) {
     $.ajax({
         type: 'POST',
@@ -282,6 +294,7 @@ function changeStatus(notificationId) {
     });
 }
 
+// Funzione per scaricare le eventuali notifiche ogni 5 secondi
 setInterval(function () {
     $.ajax({
         type: "GET",
@@ -302,3 +315,16 @@ setInterval(function () {
         }
     });
 }, 5000);
+
+// Funzione per aprire il modal dell'immagine se la larghezza della finestra è inferiore a 750px
+function resizeImg() {
+    if ($(window).width() < 750) {
+        $(document).on('click', '.carousel-item img', function () {
+            const img = $(this).attr('src');
+            $('#modalImage').attr('src', img);
+            $('#imageModal').modal('show');
+        });
+    } else {
+        $(document).off('click', '.carousel-item img');
+    }
+}

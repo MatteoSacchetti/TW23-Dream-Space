@@ -1,4 +1,5 @@
 $(document).ready(function () {
+    // Controllo se l'utente è loggato
     $.ajax({
         url: '../Model/session.php',
         method: 'GET',
@@ -16,11 +17,18 @@ $(document).ready(function () {
         }
     });
 
+    // Chiamo la funzione per settare la notifica come letta quando si chiude il modal
     $("#closeModalButton").on("click", function () {
         changeStatus($(this).data("notification-id"));
     });
+
+    // Richiamo la funzione per gestire il click dell'immagine quando ridimensiono la finestra
+    $(window).resize(function () {
+        resizeImg();
+    });
 });
 
+// Funzione per scaricare i post e i commenti
 function downlaodPosts(email) {
     $.ajax({
         url: '../Model/home.php',
@@ -95,6 +103,7 @@ function downlaodPosts(email) {
     });
 }
 
+// Funzione per inviare un commento e notificare l'utente
 function comment($post_id, $sender, $receiver) {
     let comment = $('#comment' + $post_id).val();
     $.ajax({
@@ -144,6 +153,7 @@ function comment($post_id, $sender, $receiver) {
     });
 }
 
+// Funzione per settare la notifica come letta
 function changeStatus(notificationId) {
     $.ajax({
         type: 'POST',
@@ -163,6 +173,7 @@ function changeStatus(notificationId) {
     });
 }
 
+// Funzione per scaricare le eventuali notifiche ogni 5 secondi
 setInterval(function () {
     $.ajax({
         type: "GET",
@@ -183,3 +194,16 @@ setInterval(function () {
         }
     });
 }, 5000);
+
+// Funzione per aprire il modal dell'immagine se la larghezza della finestra è inferiore a 750px
+function resizeImg() {
+    if ($(window).width() < 750) {
+        $(document).on('click', '.carousel-item img', function () {
+            const img = $(this).attr('src');
+            $('#modalImage').attr('src', img);
+            $('#imageModal').modal('show');
+        });
+    } else {
+        $(document).off('click', '.carousel-item img');
+    }
+}
