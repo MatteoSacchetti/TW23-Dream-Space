@@ -37,7 +37,7 @@ function downlaodPosts(email) {
                 // Creo struttura carousel di bootstrap per le immagini
                 let postHtml = `
                     <div>
-                        <a href="profile.html?email=${post.email}" class="btn p-0"><h3>${post.name} ${post.surname}</h3></a>
+                        <a href="profile.html?email=${post.email}" class="btn p-0"><h2>${post.name} ${post.surname}</h2></a>
                         <div id="carousel-${post.post_id}" class="carousel slide" data-bs-ride="carousel">
                             <div class="carousel-inner">
                 `;
@@ -70,7 +70,7 @@ function downlaodPosts(email) {
                 post.comments.forEach(function (comment) {
                     postHtml += `
                         <div class="m-4">
-                            <a href="profile.html?email=${comment.author}" class="btn p-0"><h5>${comment.author_name} ${comment.author_surname}</h5></a>
+                            <a href="profile.html?email=${comment.author}" class="btn p-0"><p class="h5">${comment.author_name} ${comment.author_surname}</p></a>
                             <p>${comment.comment}</p>
                             <hr>
                         </div>
@@ -79,6 +79,7 @@ function downlaodPosts(email) {
 
                 postHtml += `
                         <div class="m-4">
+                            <label for="comment${post.post_id}" class="form-label">Aggiungi un commento:</label>
                             <input type="text" class="form-control" id="comment${post.post_id}" placeholder="Aggiungi un commento">
                             <button class="btn w-100" onclick="comment(${post.post_id}, '${email}', '${post.email}')">Invia</button>
                         </div>

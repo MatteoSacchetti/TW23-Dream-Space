@@ -29,7 +29,7 @@ function downlaodFollowing($sessionEmail, $getEmail) {
             response.forEach(element => {
                 let followingHtml = `
                     <div class="m-2 text-center">
-                        <a href="profile.html?email=${element.follower}" class="btn p-0"><h5>${element.name} ${element.surname}</h5></a>
+                        <a href="profile.html?email=${element.follower}" class="btn p-0"><p class="h5">${element.name} ${element.surname}</p></a>
                         <br>
                 `;
                 if ($sessionEmail === $getEmail) {

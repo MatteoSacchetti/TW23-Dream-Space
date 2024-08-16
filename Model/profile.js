@@ -33,11 +33,11 @@ $(document).ready(function () {
             let dataHtml = `
                 <h2 id="dati" class="text-center">${response.name} ${response.surname}</h2>
                 <div class="d-flex justify-content-center mt-3">
-                    <a class="btn p-0" href="../view/followers.html?email=${email}"><h5>Followers: <span id="followers">${response.followers}</span></h5></a>
-                    <a class="btn p-0" href="../view/following.html?email=${email}"><h5 class="ms-5">Following: <span id="following">${response.following}</span></h5></a>
+                    <a class="btn p-0" href="../view/followers.html?email=${email}"><p class="h5">Followers: <span id="followers">${response.followers}</span></p></a>
+                    <a class="btn p-0" href="../view/following.html?email=${email}"><p class="h5 ms-5">Following: <span id="following">${response.following}</span></p></a>
                 </div>
             `;
-            $('#dati').append(dataHtml);
+            $('#profilo-dati').append(dataHtml);
 
             // Stampo il tasto per seguire l'utente
             if (response.follow != -1) {
@@ -102,7 +102,7 @@ $(document).ready(function () {
                     post.comments.forEach(function (comment) {
                         postHtml += `
                             <div class="m-4">
-                                <a href="profile.html?email=${comment.author}" class="btn p-0"><h5>${comment.author_name} ${comment.author_surname}</h5></a>
+                                <a href="profile.html?email=${comment.author}" class="btn p-0"><h3>${comment.author_name} ${comment.author_surname}</h3></a>
                                 <p>${comment.comment}</p>
                                 <hr>
                             </div>
@@ -111,8 +111,9 @@ $(document).ready(function () {
 
                     postHtml += `
                             <div class="m-4">
+                                <label for="comment${post.post_id}" class="form-label">Aggiungi un commento:</label>
                                 <input type="text" class="form-control" id="comment${post.post_id}" placeholder="Aggiungi un commento">
-                            <button class="btn w-100" onclick="comment(${post.post_id}, '${$sessionMail}', '${email}')">Invia</button>
+                                <button class="btn w-100" onclick="comment(${post.post_id}, '${$sessionMail}', '${email}')">Invia</button>
                             </div
                         </div>
                         <hr class="mb-5">
