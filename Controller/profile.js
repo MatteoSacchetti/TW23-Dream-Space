@@ -144,7 +144,7 @@ function comment($post_id, $sender, $receiver) {
     let comment = $('#comment' + $post_id).val();
     $.ajax({
         type: 'POST',
-        url: '../Model/home_comment.php',
+        url: '../Model/comment_send.php',
         dataType: 'json',
         data: {
             post_id: $post_id,
@@ -160,7 +160,7 @@ function comment($post_id, $sender, $receiver) {
                         let message = result.nome + " " + result.cognome + " ha commentato il tuo post: " + comment;
                         $.ajax({
                             type: 'POST',
-                            url: '../Model/home_notifications_send.php',
+                            url: '../Model/notifications_send.php',
                             dataType: 'json',
                             data: {
                                 sender: $sender,
@@ -212,7 +212,7 @@ function follow($sender, $receiver) {
                     let message = result.nome + " " + result.cognome + " ha iniziato a seguirti.";
                     $.ajax({
                         type: 'POST',
-                        url: '../Model/home_notifications_send.php',
+                        url: '../Model/notifications_send.php',
                         dataType: 'json',
                         data: {
                             sender: $sender,
@@ -280,7 +280,7 @@ function unfollow() {
 function changeStatus(notificationId) {
     $.ajax({
         type: 'POST',
-        url: '../Model/home_notifications_read.php',
+        url: '../Model/notifications_read.php',
         dataType: 'json',
         data: {
             notification_id: notificationId
@@ -300,7 +300,7 @@ function changeStatus(notificationId) {
 setInterval(function () {
     $.ajax({
         type: "GET",
-        url: "../Model/home_notifications.php",
+        url: "../Model/notifications_download.php",
         datatype: "json",
         success: function (response) {
             if (response.length > 0) {
