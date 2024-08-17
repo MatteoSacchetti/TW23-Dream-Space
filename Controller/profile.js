@@ -27,6 +27,8 @@ $(document).ready(function () {
     $(window).resize(function () {
         resizeImg();
     });
+    // La prima volta che apro la pagina eseguo la funzione resizeImg
+    resizeImg();
 
     // Scarico tutti i dati del profilo con i post e i commenti
     const queryString = window.location.search;

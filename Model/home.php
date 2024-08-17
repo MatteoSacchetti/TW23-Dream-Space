@@ -69,6 +69,7 @@ $query = "
     FROM post
     JOIN post_comments ON post.post_id = post_comments.post_id
     JOIN profilo ON post_comments.author = profilo.email
+    ORDER BY post_comments.datetime ASC
 ";
 $stmt = $db->sql->prepare($query);
 $stmt->execute();

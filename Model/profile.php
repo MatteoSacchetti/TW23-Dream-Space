@@ -97,6 +97,7 @@ if (isset($_SESSION["email"]) && isset($_GET["email"])) {
         JOIN post_comments ON post.post_id = post_comments.post_id
         JOIN profilo ON post_comments.author = profilo.email
         WHERE post.author = ?
+        ORDER BY post_comments.datetime ASC
     ";
     $stmt = $db->sql->prepare($query);
     $stmt->bind_param("s", $get_email);

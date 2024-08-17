@@ -26,6 +26,8 @@ $(document).ready(function () {
     $(window).resize(function () {
         resizeImg();
     });
+    // La prima volta che apro la pagina eseguo la funzione resizeImg
+    resizeImg();
 });
 
 // Funzione per scaricare i post e i commenti
