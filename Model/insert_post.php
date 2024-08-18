@@ -39,5 +39,5 @@ if (isset($_SESSION["email"]) && isset($_POST["description"]) && isset($_FILES["
         $stmt->close();
     }
 
-    echo json_encode("OK");
+    header('location: ../view/profile.html?email=' . $email);
 }
