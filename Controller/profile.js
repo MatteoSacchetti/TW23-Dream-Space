@@ -1,4 +1,8 @@
 $(document).ready(function () {
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    const email = urlParams.get('email');
+
     // Controllo se l'utente è loggato
     $sessionMail = "";
     $.ajax({
@@ -9,6 +13,15 @@ $(document).ready(function () {
             if (response.email) {
                 $sessionMail = response.email;
                 $('#profilo').attr('href', 'profile.html?email=' + response.email);
+
+                // Se la mail della sessione è diversa dalla mail del profilo, rimuovo il div per aggiungere post
+                if ($sessionMail != email) {
+                    console.log("sessionMail: " + $sessionMail + " email: " + email);
+                    $('#insert_post').remove();
+                }
+
+                // Scarico tutti i dati del profilo con i post e i commenti
+                downlaodProfilePosts(email);
             } else {
                 window.location.href = 'index.html';
             }
@@ -29,11 +42,10 @@ $(document).ready(function () {
     });
     // La prima volta che apro la pagina eseguo la funzione resizeImg
     resizeImg();
+});
 
-    // Scarico tutti i dati del profilo con i post e i commenti
-    const queryString = window.location.search;
-    const urlParams = new URLSearchParams(queryString);
-    const email = urlParams.get('email');
+// Funzione per scaricare i post e i commenti
+function downlaodProfilePosts(email) {
     $.ajax({
         url: '../Model/profile.php?email=' + email,
         method: 'GET',
@@ -137,7 +149,7 @@ $(document).ready(function () {
             console.log('Error', status, error);
         }
     });
-});
+}
 
 // Funzoine per inviare un commento e inviare notifica all'utente
 function comment($post_id, $sender, $receiver) {
